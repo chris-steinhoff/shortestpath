@@ -9,6 +9,7 @@
     <packaging>jar</packaging>
 
     <name>shortestpath</name>
+    <url>https://github.com/chris-steinhoff/shortestpath</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

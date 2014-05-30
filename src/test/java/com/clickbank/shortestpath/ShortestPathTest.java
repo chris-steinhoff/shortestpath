@@ -13,7 +13,7 @@ public class ShortestPathTest {
     private final Charset utf8 = Charset.forName("UTF-8");
 
     @Test
-    public void test() throws Exception{
+    public void test() throws Exception {
         File f = new File("src/test/resources/simple.grf");
         Assert.assertNotNull(f);
         Assert.assertTrue(f.exists());
