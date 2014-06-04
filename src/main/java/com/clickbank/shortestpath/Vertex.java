@@ -1,22 +1,25 @@
 package com.clickbank.shortestpath;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
 import java.util.Set;
 
 public class Vertex implements Comparable<Vertex> {
 
     private final String id;
-    private Set<Vertex> neighbors;
+    private final Set<Vertex> neighbors;
 
-    public Vertex(String id) {
-        if(id == null) {
-            throw new IllegalArgumentException("id cannot be null");
-        }
+    public Vertex(@NotNull String id) {
         this.id = id;
+        neighbors = new HashSet<>();
     }
 
-    public void addNeighbor(Vertex vertex) {
+    public void addNeighbor(@Nullable Vertex vertex) {
         if(vertex != null) {
             neighbors.add(vertex);
+            vertex.neighbors.add(this);
         }
     }
 
@@ -36,8 +39,20 @@ public class Vertex implements Comparable<Vertex> {
     }
 
     @Override
-    public int compareTo(Vertex o) {
+    public int compareTo(@NotNull Vertex o) {
         return id.compareTo(o.id);
+    }
+
+    @Override
+    public String toString() {
+        return "Vertex{" +
+                "id='" + id + '\'' +
+                //", neighbors=" + neighbors +
+                '}';
+    }
+
+    public String getId() {
+        return id;
     }
 
 }

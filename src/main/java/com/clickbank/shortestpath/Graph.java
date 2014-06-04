@@ -1,17 +1,20 @@
 package com.clickbank.shortestpath;
 
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Graph {
 
-    private Map<String,Vertex> vertices;
+    private final Set<Vertex> vertices;
 
     public Graph() {
+        vertices = new HashSet<>();
     }
 
-    public void addVertex(int row, int column) {
-        String id = row + ":" + column;
-        vertices.put(id, new Vertex(row, column));
+    public void addVertex(@NotNull Vertex vertex) {
+        vertices.add(vertex);
     }
 
 }
