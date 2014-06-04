@@ -16,10 +16,11 @@ public class Vertex implements Comparable<Vertex> {
         neighbors = new HashSet<>();
     }
 
-    public void addNeighbor(@Nullable Vertex vertex) {
-        if(vertex != null) {
+    public void addNeighbors(@NotNull Iterable<Vertex> vertices) {
+        for (Vertex vertex : vertices) {
             neighbors.add(vertex);
             vertex.neighbors.add(this);
+            System.out.println(this + " --> " + vertex);
         }
     }
 
@@ -47,7 +48,6 @@ public class Vertex implements Comparable<Vertex> {
     public String toString() {
         return "Vertex{" +
                 "id='" + id + '\'' +
-                //", neighbors=" + neighbors +
                 '}';
     }
 
