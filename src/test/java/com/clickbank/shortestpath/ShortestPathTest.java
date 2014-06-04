@@ -1,11 +1,11 @@
 package com.clickbank.shortestpath;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -34,8 +34,22 @@ public class ShortestPathTest {
         assertNotNull(data.start);
         assertNotNull(data.finish);
 
-        assertEquals(new Vertex("2:0"), data.start);
-        assertEquals(new Vertex("2:4"), data.finish);
+        assertEquals(new Vertex(new VertexId(2, 0)), data.start);
+        assertEquals(new Vertex(new VertexId(2, 4)), data.finish);
+    }
+
+    @Test
+    public void testAStar() throws Exception {
+        GraphData data = GraphFactory.createGraph(graphFile.getAbsolutePath());
+        AStarShortestPath aStar = new AStarShortestPath();
+        Iterable<Vertex> path = aStar.getPath(data.start, data.finish);
+        assertNotNull(path);
+
+        Iterator<Vertex> it = path.iterator();
+        assertNotNull(it);
+        while(it.hasNext()) {
+            System.out.println(it.next());
+        }
     }
 
 }

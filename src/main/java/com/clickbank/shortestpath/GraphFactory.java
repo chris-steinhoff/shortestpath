@@ -16,7 +16,7 @@ import java.util.List;
 public class GraphFactory {
 
     private static final Charset utf8 = Charset.forName("UTF-8");
-    private HashMap<String,Vertex> vertexCache = new HashMap<>();
+    private HashMap<VertexId,Vertex> vertexCache = new HashMap<>();
     private Vertex start;
     private Vertex finish;
 
@@ -94,8 +94,8 @@ public class GraphFactory {
     }
 
     @NotNull
-    private String createVertexId(int rowNum, int colNum) {
-        return rowNum + ":" + colNum;
+    private VertexId createVertexId(int rowNum, int colNum) {
+        return new VertexId(rowNum, colNum);
     }
 
     private void addVertex(Vertex vertex) {

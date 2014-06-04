@@ -1,17 +1,18 @@
 package com.clickbank.shortestpath;
 
+import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Immutable
 public class Vertex implements Comparable<Vertex> {
 
-    private final String id;
+    private final VertexId id;
     private final Set<Vertex> neighbors;
 
-    public Vertex(@NotNull String id) {
+    public Vertex(@NotNull VertexId id) {
         this.id = id;
         neighbors = new HashSet<>();
     }
@@ -22,6 +23,14 @@ public class Vertex implements Comparable<Vertex> {
             vertex.neighbors.add(this);
             System.out.println(this + " --> " + vertex);
         }
+    }
+
+    public double estimatedDistanceTo(@NotNull Vertex vertex) {
+        int a = Math.abs(id.x - vertex.id.x);
+        int b = Math.abs(id.y - vertex.id.y);
+        long aSquared = a * a;
+        long bSquared = b * b;
+        return Math.sqrt((double)aSquared + (double)bSquared);
     }
 
     @Override
@@ -51,8 +60,12 @@ public class Vertex implements Comparable<Vertex> {
                 '}';
     }
 
-    public String getId() {
+    public VertexId getId() {
         return id;
+    }
+
+    protected Iterable<Vertex> getNeighbors() {
+        return neighbors;
     }
 
 }
