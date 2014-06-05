@@ -21,16 +21,15 @@ public class Vertex implements Comparable<Vertex> {
         for (Vertex vertex : vertices) {
             neighbors.add(vertex);
             vertex.neighbors.add(this);
-            System.out.println(this + " --> " + vertex);
         }
     }
 
     public double estimatedDistanceTo(@NotNull Vertex vertex) {
-        int a = Math.abs(id.x - vertex.id.x);
-        int b = Math.abs(id.y - vertex.id.y);
+        int a = id.x - vertex.id.x;
+        int b = id.y - vertex.id.y;
         long aSquared = a * a;
         long bSquared = b * b;
-        return Math.sqrt((double)aSquared + (double)bSquared);
+        return Math.sqrt(aSquared + bSquared);
     }
 
     @Override
@@ -64,7 +63,7 @@ public class Vertex implements Comparable<Vertex> {
         return id;
     }
 
-    protected Iterable<Vertex> getNeighbors() {
+    public Iterable<Vertex> getNeighbors() {
         return neighbors;
     }
 

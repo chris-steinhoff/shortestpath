@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class ShortestPathTest {
 
     private final Charset utf8 = Charset.forName("UTF-8");
-    private final File graphFile = new File("src/test/resources/simple.grf");
+    private final File graphFile = new File("src/test/resources/large.grf");
 
     @Test
     public void testGraphFile() throws Exception {

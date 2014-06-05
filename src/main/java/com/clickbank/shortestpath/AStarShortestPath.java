@@ -2,17 +2,13 @@ package com.clickbank.shortestpath;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.*;
 
 public class AStarShortestPath {
 
     public Iterable<Vertex> getPath(Vertex start, Vertex finish) {
-        ConcurrentSkipListSet<Vertex> closedSet = new ConcurrentSkipListSet<>();
-        PriorityBlockingQueue<AStarVertex> openSet = new PriorityBlockingQueue<>(11, new AStarComparator(finish));
+        HashSet<Vertex> closedSet = new HashSet<>();
+        PriorityQueue<AStarVertex> openSet = new PriorityQueue<>(11, new AStarComparator(finish));
 
         AStarVertex s = new AStarVertex(start);
         openSet.add(s);
@@ -58,8 +54,11 @@ public class AStarShortestPath {
 
         @Override
         public int compare(Vertex o1, Vertex o2) {
-            return (int)Math.round(o1.estimatedDistanceTo(finish) - o2.estimatedDistanceTo(finish));
+            long d1 = Math.round(o1.estimatedDistanceTo(finish) * 100.0);
+            long d2 = Math.round(o2.estimatedDistanceTo(finish) * 100.0);
+            return (int)(d1 - d2);
         }
+
     }
 
     class AStarVertex extends Vertex {
