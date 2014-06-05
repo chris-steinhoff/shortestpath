@@ -24,14 +24,6 @@ public class Vertex implements Comparable<Vertex> {
         }
     }
 
-    public double estimatedDistanceTo(@NotNull Vertex vertex) {
-        int a = id.x - vertex.id.x;
-        int b = id.y - vertex.id.y;
-        long aSquared = a * a;
-        long bSquared = b * b;
-        return Math.sqrt(aSquared + bSquared);
-    }
-
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;

@@ -4,7 +4,7 @@ import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
 @Immutable
-public class VertexId implements Comparable<VertexId> {
+public class VertexId implements Comparable<VertexId>, Coordinate {
 
     public final int x;
     public final int y;
@@ -44,6 +44,16 @@ public class VertexId implements Comparable<VertexId> {
     @Override
     public String toString() {
         return String.format("{%d,%d}", x, y);
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
     }
 
 }
