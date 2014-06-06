@@ -1,6 +1,7 @@
 package com.clickbank.shortestpath;
 
 import com.clickbank.shortestpath.astar.AStarShortestPath;
+import com.clickbank.shortestpath.grid.GridGraphFactory;
 import org.junit.Test;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class ShortestPathTest {
 
     @Test
     public void testGraphFactory() throws Exception {
-        GraphData data = GraphFactory.createGraph(smallGraphFile.getAbsolutePath());
+        GraphData data = GridGraphFactory.createGraph(smallGraphFile.getAbsolutePath());
         assertNotNull(data);
         assertNotNull(data.graph);
         assertNotNull(data.start);
@@ -42,9 +43,9 @@ public class ShortestPathTest {
 
     @Test
     public void testAStar() throws Exception {
-        GraphData data = GraphFactory.createGraph(concaveGraphFile.getAbsolutePath());
+        GraphData data = GridGraphFactory.createGraph(concaveGraphFile.getAbsolutePath());
         AStarShortestPath aStar = new AStarShortestPath(new ManhattanHeuristic());
-        Iterable<TrackedVertex> path = aStar.getPath(data.start, data.finish);
+        Iterable<TrackedVertex> path = aStar.findPath(data.start, data.finish);
         assertNotNull(path);
 
         Iterator<TrackedVertex> it = path.iterator();
@@ -52,6 +53,13 @@ public class ShortestPathTest {
         while(it.hasNext()) {
             System.out.println(it.next());
         }
+    }
+
+    @Test
+    public void testGraphPrint() throws Exception {
+        GraphData data = GridGraphFactory.createGraph(smallGraphFile.getAbsolutePath());
+        data.graph.printToTerminal();
+        data.graph.printShortestPathToTerminal(data.start.getId(), data.finish.getId());
     }
 
 }

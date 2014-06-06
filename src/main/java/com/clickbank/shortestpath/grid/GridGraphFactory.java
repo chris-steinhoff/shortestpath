@@ -1,5 +1,9 @@
-package com.clickbank.shortestpath;
+package com.clickbank.shortestpath.grid;
 
+import com.clickbank.shortestpath.Graph;
+import com.clickbank.shortestpath.GraphData;
+import com.clickbank.shortestpath.Vertex;
+import com.clickbank.shortestpath.VertexId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,21 +17,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class GraphFactory {
+public class GridGraphFactory {
 
     private static final Charset utf8 = Charset.forName("UTF-8");
     private HashMap<VertexId,Vertex> vertexCache = new HashMap<>();
     private Vertex start;
     private Vertex finish;
 
-    private GraphFactory() {
+    private GridGraphFactory() {
     }
 
     @NotNull
     public static GraphData createGraph(String filename) throws IOException {
         File file = new File(filename);
-        GraphFactory factory = new GraphFactory();
-        Graph graph = new Graph();
+        GridGraphFactory factory = new GridGraphFactory();
+        HashMap<VertexId,Vertex> vertices = new HashMap<>();
 
         if(!file.exists()) {
             throw new FileNotFoundException();
@@ -60,18 +64,18 @@ public class GraphFactory {
                         continue;
                 }
 
-                graph.addVertex(vertex);
+                vertices.put(vertex.getId(), vertex);
             }
         }
 
-        return new GraphData(graph, factory.start, factory.finish);
+        return new GraphData(new Graph(vertices), factory.start, factory.finish);
     }
 
     @NotNull
     private Vertex createVertex(int rowNum, int colNum) {
-        Vertex vertex = new Vertex(createVertexId(rowNum, colNum));
+        Vertex vertex = new Vertex(new VertexId(rowNum, colNum));
         vertex.addNeighbors(getNeighborsOf(rowNum, colNum));
-        addVertex(vertex);
+        vertexCache.put(vertex.getId(), vertex);
         return vertex;
     }
 
@@ -94,20 +98,11 @@ public class GraphFactory {
     }
 
     @NotNull
-    private VertexId createVertexId(int rowNum, int colNum) {
-        return new VertexId(rowNum, colNum);
-    }
-
-    private void addVertex(Vertex vertex) {
-        vertexCache.put(vertex.getId(), vertex);
-    }
-
-    @NotNull
     private Collection<Vertex> getNeighborsOf(int rowNum, int colNum) {
         ArrayList<Vertex> neighbors = new ArrayList<>(2);
 
-        addNeighbor(neighbors, vertexCache.get(createVertexId(rowNum - 1, colNum)));
-        addNeighbor(neighbors, vertexCache.get(createVertexId(rowNum, colNum - 1)));
+        addNeighbor(neighbors, vertexCache.get(new VertexId(rowNum - 1, colNum)));
+        addNeighbor(neighbors, vertexCache.get(new VertexId(rowNum, colNum - 1)));
 
         return neighbors;
     }

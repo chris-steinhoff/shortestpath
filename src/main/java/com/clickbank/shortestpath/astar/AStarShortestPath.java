@@ -1,15 +1,12 @@
 package com.clickbank.shortestpath.astar;
 
-import com.clickbank.shortestpath.GraphPath;
-import com.clickbank.shortestpath.Heuristic;
-import com.clickbank.shortestpath.TrackedVertex;
-import com.clickbank.shortestpath.Vertex;
-import com.clickbank.shortestpath.VertexId;
+import com.clickbank.shortestpath.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class AStarShortestPath {
+public class AStarShortestPath implements PathFinder {
 
     private final Heuristic heuristic;
 
@@ -17,15 +14,16 @@ public class AStarShortestPath {
         this.heuristic = heuristic;
     }
 
-    public Iterable<TrackedVertex> getPath(@NotNull Vertex start, @NotNull Vertex finish) {
+    @Override
+    public Iterable<TrackedVertex> findPath(@NotNull Vertex start, @NotNull Vertex finish) {
         HashSet<VertexId> closedSet = new HashSet<>();
         PriorityQueue<AStarVertex> openSet = new PriorityQueue<>(11, new AStarPriorityQueueComparator());
 
-        AStarVertex s = new AStarVertex(start, 0, heuristic.distanceBetween(start.getId(), finish.getId()), true, null);
-        openSet.add(s);
+        AStarVertex current = createAStarVertex(start, finish);
+        openSet.add(current);
 
         while(!openSet.isEmpty()) {
-            AStarVertex current = openSet.poll();
+            current = openSet.poll();
             if(current.getId().equals(finish.getId())) {
                 return new GraphPath(current);
             }
@@ -36,9 +34,7 @@ public class AStarShortestPath {
                     continue;
                 }
 
-                double traveledDistance = current.getTraveledDistance() + 1;
-                double heuristicDistance = traveledDistance + heuristic.distanceBetween(vertex.getId(), finish.getId());
-                AStarVertex neighbor = new AStarVertex(vertex, traveledDistance, heuristicDistance, true, current);
+                AStarVertex neighbor = createNeighboringAStarVertex(current, vertex, finish);
                 if(!openSet.contains(neighbor)/* || tentativeGScore < neighbor.gScore*/) {
                     openSet.offer(neighbor);
                 }
@@ -46,6 +42,17 @@ public class AStarShortestPath {
         }
 
         return null;
+    }
+
+    private AStarVertex createAStarVertex(@NotNull Vertex start, @NotNull Vertex finish) {
+        return createNeighboringAStarVertex(null, start, finish);
+    }
+
+    private AStarVertex createNeighboringAStarVertex(@Nullable AStarVertex current,
+            @NotNull Vertex neighbor, @NotNull Vertex finish) {
+        double traveledDistance = (current == null ? 0.0 : current.getTraveledDistance() + 1);
+        double heuristicDistance = traveledDistance + heuristic.distanceBetween(neighbor.getId(), finish.getId());
+        return new AStarVertex(neighbor, traveledDistance, heuristicDistance, true, current);
     }
 
 }

@@ -39,6 +39,7 @@ public class AStarVertex implements TrackedVertex {
         return vertex.toString();
     }
 
+    @Override
     public VertexId getId() {
         return vertex.getId();
     }
