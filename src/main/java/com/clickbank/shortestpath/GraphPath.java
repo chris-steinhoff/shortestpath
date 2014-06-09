@@ -1,24 +1,54 @@
 package com.clickbank.shortestpath;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import org.jetbrains.annotations.NotNull;
 
-public class GraphPath implements Iterable<TrackedVertex> {
+import java.util.*;
 
-    private final LinkedList<TrackedVertex> path;
+public class GraphPath implements Iterable<VertexId> {
 
-    public GraphPath(TrackedVertex finish) {
-        path = new LinkedList<>();
-        path.add(finish);
-        TrackedVertex prev = finish;
-        while((prev = prev.getPreviousVertex()) != null) {
-            path.add(prev);
-        }
+    private final List<VertexId> path;
+    private final Set<VertexId> visitedVertices;
+    private final boolean pathFound;
+    private final Set<VertexId> pathVertices;
+
+    private GraphPath(List<VertexId> path, Set<VertexId> visitedVertices, boolean pathFound) {
+        this.path = path;
+        this.visitedVertices = visitedVertices;
+        this.pathFound = pathFound;
+        this.pathVertices = new HashSet<>(path);
+    }
+
+    public static GraphPath createGraphPath(
+            @NotNull Set<VertexId> visitedVertices,
+            @NotNull TrackedVertex finish) {
+        LinkedList<VertexId> path = new LinkedList<>();
+        TrackedVertex current = finish;
+        do {
+            path.addFirst(current.getId());
+        } while((current = current.getPreviousVertex()) != null);
+        return new GraphPath(path, visitedVertices, true);
+    }
+
+    public static GraphPath createFailedGraphPath(
+            @NotNull Set<VertexId> visitedVertices) {
+        return new GraphPath(null, visitedVertices, false);
+    }
+
+    public boolean wasVertexVisited(VertexId id) {
+        return visitedVertices.contains(id);
+    }
+
+    public boolean isVertexInPath(VertexId id) {
+        return pathVertices.contains(id);
+    }
+
+    public boolean wasPathFound() {
+        return pathFound;
     }
 
     @Override
-    public Iterator<TrackedVertex> iterator() {
-        return path.descendingIterator();
+    public Iterator<VertexId> iterator() {
+        return path.iterator();
     }
 
 }

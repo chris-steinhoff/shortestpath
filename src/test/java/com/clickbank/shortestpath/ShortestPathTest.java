@@ -10,15 +10,14 @@ import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ShortestPathTest {
 
     private final Charset utf8 = Charset.forName("UTF-8");
     private final File smallGraphFile = new File("src/test/resources/small.grf");
     private final File concaveGraphFile = new File("src/test/resources/concave.grf");
+    private final File wikipediaGraphFile = new File("src/test/resources/wikipedia.grf");
 
     @Test
     public void testGraphFile() throws Exception {
@@ -44,11 +43,11 @@ public class ShortestPathTest {
     @Test
     public void testAStar() throws Exception {
         GraphData data = GridGraphFactory.createGraph(concaveGraphFile.getAbsolutePath());
-        AStarShortestPath aStar = new AStarShortestPath(new ManhattanHeuristic());
-        Iterable<TrackedVertex> path = aStar.findPath(data.start, data.finish);
+        AStarShortestPath aStar = new AStarShortestPath(data.graph, new ManhattanHeuristic());
+        GraphPath path = aStar.findPath(data.start.getId(), data.finish.getId());
         assertNotNull(path);
 
-        Iterator<TrackedVertex> it = path.iterator();
+        Iterator<VertexId> it = path.iterator();
         assertNotNull(it);
         while(it.hasNext()) {
             System.out.println(it.next());
@@ -57,8 +56,8 @@ public class ShortestPathTest {
 
     @Test
     public void testGraphPrint() throws Exception {
-        GraphData data = GridGraphFactory.createGraph(smallGraphFile.getAbsolutePath());
-        data.graph.printToTerminal();
+        GraphData data = GridGraphFactory.createGraph(wikipediaGraphFile.getAbsolutePath());
+        //data.graph.printToTerminal();
         data.graph.printShortestPathToTerminal(data.start.getId(), data.finish.getId());
     }
 

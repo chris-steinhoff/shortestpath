@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PathFinder {
 
-    Iterable<TrackedVertex> findPath(@NotNull Vertex start, @NotNull Vertex finish);
+    @NotNull
+    GraphPath findPath(@NotNull VertexId start, @NotNull VertexId finish);
 
 }

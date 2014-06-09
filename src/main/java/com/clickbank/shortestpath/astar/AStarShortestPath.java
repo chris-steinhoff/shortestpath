@@ -8,51 +8,36 @@ import java.util.*;
 
 public class AStarShortestPath implements PathFinder {
 
+    private final Graph graph;
     private final Heuristic heuristic;
 
-    public AStarShortestPath(Heuristic heuristic) {
+    public AStarShortestPath(@NotNull Graph graph, @NotNull Heuristic heuristic) {
+        this.graph = graph;
         this.heuristic = heuristic;
     }
 
     @Override
-    public Iterable<TrackedVertex> findPath(@NotNull Vertex start, @NotNull Vertex finish) {
-        HashSet<VertexId> closedSet = new HashSet<>();
-        PriorityQueue<AStarVertex> openSet = new PriorityQueue<>(11, new AStarPriorityQueueComparator());
+    @NotNull
+    public GraphPath findPath(@NotNull VertexId start, @NotNull VertexId finish) {
+        AStarTrackedVertexFactory trackedVertexFactory = new AStarTrackedVertexFactory(heuristic, finish);
+        GraphPathBuilder builder = new GraphPathBuilder();
 
-        AStarVertex current = createAStarVertex(start, finish);
-        openSet.add(current);
-
-        while(!openSet.isEmpty()) {
-            current = openSet.poll();
-            if(current.getId().equals(finish.getId())) {
-                return new GraphPath(current);
+        builder.open(trackedVertexFactory.createTrackedVertex(start));
+        while(builder.hasNext()) {
+            TrackedVertex current = builder.closeNext();
+            if(current.getId().equals(finish)) {
+                return builder.getGraphPath(current);
             }
 
-            closedSet.add(current.getId());
-            for(Vertex vertex : current.getNeighbors()) {
-                if(closedSet.contains(vertex.getId())) {
-                    continue;
-                }
-
-                AStarVertex neighbor = createNeighboringAStarVertex(current, vertex, finish);
-                if(!openSet.contains(neighbor)/* || tentativeGScore < neighbor.gScore*/) {
-                    openSet.offer(neighbor);
+            for(VertexId vertex : graph.getNeighbors(current.getId())) {
+                TrackedVertex neighbor = trackedVertexFactory.createNeighboringTrackedVertex(current, vertex);
+                if(!builder.isClosed(neighbor)) {
+                    builder.open(neighbor);
                 }
             }
         }
 
-        return null;
-    }
-
-    private AStarVertex createAStarVertex(@NotNull Vertex start, @NotNull Vertex finish) {
-        return createNeighboringAStarVertex(null, start, finish);
-    }
-
-    private AStarVertex createNeighboringAStarVertex(@Nullable AStarVertex current,
-            @NotNull Vertex neighbor, @NotNull Vertex finish) {
-        double traveledDistance = (current == null ? 0.0 : current.getTraveledDistance() + 1);
-        double heuristicDistance = traveledDistance + heuristic.distanceBetween(neighbor.getId(), finish.getId());
-        return new AStarVertex(neighbor, traveledDistance, heuristicDistance, true, current);
+        return builder.getFailedGraphPath();
     }
 
 }

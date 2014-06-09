@@ -10,7 +10,7 @@ import java.util.Set;
 public class Vertex implements Comparable<Vertex> {
 
     private final VertexId id;
-    private final Set<Vertex> neighbors;
+    private final Set<VertexId> neighbors;
 
     public Vertex(@NotNull VertexId id) {
         this.id = id;
@@ -19,8 +19,8 @@ public class Vertex implements Comparable<Vertex> {
 
     public void addNeighbors(@NotNull Iterable<Vertex> vertices) {
         for (Vertex vertex : vertices) {
-            neighbors.add(vertex);
-            vertex.neighbors.add(this);
+            neighbors.add(vertex.getId());
+            vertex.neighbors.add(id);
         }
     }
 
@@ -55,7 +55,7 @@ public class Vertex implements Comparable<Vertex> {
         return id;
     }
 
-    public Iterable<Vertex> getNeighbors() {
+    public Iterable<VertexId> getNeighbors() {
         return neighbors;
     }
 
