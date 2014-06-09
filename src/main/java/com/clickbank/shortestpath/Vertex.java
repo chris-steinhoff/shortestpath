@@ -3,6 +3,7 @@ package com.clickbank.shortestpath;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,8 +56,8 @@ public class Vertex implements Comparable<Vertex> {
         return id;
     }
 
-    public Iterable<VertexId> getNeighbors() {
-        return neighbors;
+    public Set<VertexId> getNeighbors() {
+        return Collections.unmodifiableSet(neighbors);
     }
 
 }

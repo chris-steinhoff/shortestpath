@@ -2,14 +2,13 @@ package com.clickbank.shortestpath.astar;
 
 import com.clickbank.shortestpath.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 public class AStarShortestPath implements PathFinder {
 
-    private final Graph graph;
-    private final Heuristic heuristic;
+    protected final Graph graph;
+    protected final Heuristic heuristic;
+
+    protected AStarContext context = new AStarContext();
 
     public AStarShortestPath(@NotNull Graph graph, @NotNull Heuristic heuristic) {
         this.graph = graph;
@@ -20,7 +19,7 @@ public class AStarShortestPath implements PathFinder {
     @NotNull
     public GraphPath findPath(@NotNull VertexId start, @NotNull VertexId finish) {
         AStarTrackedVertexFactory trackedVertexFactory = new AStarTrackedVertexFactory(heuristic, finish);
-        GraphPathBuilder builder = new GraphPathBuilder();
+        AStarContext builder = this.context;
 
         builder.open(trackedVertexFactory.createTrackedVertex(start));
         while(builder.hasNext()) {
@@ -31,13 +30,15 @@ public class AStarShortestPath implements PathFinder {
 
             for(VertexId vertex : graph.getNeighbors(current.getId())) {
                 TrackedVertex neighbor = trackedVertexFactory.createNeighboringTrackedVertex(current, vertex);
-                if(!builder.isClosed(neighbor)) {
-                    builder.open(neighbor);
-                }
+                builder.openIfNotClosed(neighbor);
             }
         }
 
         return builder.getFailedGraphPath();
+    }
+
+    public void setContext(@NotNull AStarContext context) {
+        this.context = context;
     }
 
 }

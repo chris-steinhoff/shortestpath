@@ -36,15 +36,15 @@ public class ShortestPathTest {
         assertNotNull(data.start);
         assertNotNull(data.finish);
 
-        assertEquals(new Vertex(new VertexId(2, 0)), data.start);
-        assertEquals(new Vertex(new VertexId(2, 4)), data.finish);
+        assertEquals(new VertexId(2, 0), data.start);
+        assertEquals(new VertexId(2, 4), data.finish);
     }
 
     @Test
     public void testAStar() throws Exception {
         GraphData data = GridGraphFactory.createGraph(concaveGraphFile.getAbsolutePath());
         AStarShortestPath aStar = new AStarShortestPath(data.graph, new ManhattanHeuristic());
-        GraphPath path = aStar.findPath(data.start.getId(), data.finish.getId());
+        GraphPath path = aStar.findPath(data.start, data.finish);
         assertNotNull(path);
 
         Iterator<VertexId> it = path.iterator();
@@ -58,7 +58,7 @@ public class ShortestPathTest {
     public void testGraphPrint() throws Exception {
         GraphData data = GridGraphFactory.createGraph(wikipediaGraphFile.getAbsolutePath());
         //data.graph.printToTerminal();
-        data.graph.printShortestPathToTerminal(data.start.getId(), data.finish.getId());
+        data.graph.printShortestPathToTerminal(data.start, data.finish);
     }
 
 }

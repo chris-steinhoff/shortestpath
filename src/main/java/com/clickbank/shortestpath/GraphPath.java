@@ -31,7 +31,7 @@ public class GraphPath implements Iterable<VertexId> {
 
     public static GraphPath createFailedGraphPath(
             @NotNull Set<VertexId> visitedVertices) {
-        return new GraphPath(null, visitedVertices, false);
+        return new GraphPath(new ArrayList<VertexId>(0), visitedVertices, false);
     }
 
     public boolean wasVertexVisited(VertexId id) {

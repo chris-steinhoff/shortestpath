@@ -3,14 +3,14 @@ package com.clickbank.shortestpath;
 public class TrackedVertex {
 
     private final VertexId id;
-    private final double heuristicDistance;
     private final double traveledDistance;
+    private final double heuristicDistance;
     private final TrackedVertex previousVertex;
 
-    public TrackedVertex(VertexId id, double heuristicDistance, double traveledDistance, TrackedVertex previousVertex) {
+    public TrackedVertex(VertexId id, double traveledDistance, double heuristicDistance, TrackedVertex previousVertex) {
         this.id = id;
-        this.heuristicDistance = heuristicDistance;
         this.traveledDistance = traveledDistance;
+        this.heuristicDistance = heuristicDistance;
         this.previousVertex = previousVertex;
     }
 
@@ -39,12 +39,12 @@ public class TrackedVertex {
         return id;
     }
 
-    public double getHeuristicDistance() {
-        return heuristicDistance;
-    }
-
     public double getTraveledDistance() {
         return traveledDistance;
+    }
+
+    public double getHeuristicDistance() {
+        return heuristicDistance;
     }
 
     public TrackedVertex getPreviousVertex() {

@@ -68,7 +68,7 @@ public class GridGraphFactory {
             }
         }
 
-        return new GraphData(new Graph(vertices), factory.start, factory.finish);
+        return new GraphData(new Graph(vertices), factory.start.getId(), factory.finish.getId());
     }
 
     @NotNull
