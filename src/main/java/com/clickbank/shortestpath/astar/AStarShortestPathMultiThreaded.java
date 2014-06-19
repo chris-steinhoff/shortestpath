@@ -17,8 +17,12 @@ import java.util.concurrent.Executors;
 
 public class AStarShortestPathMultiThreaded extends AStarShortestPath {
 
-    public AStarShortestPathMultiThreaded(@NotNull Graph graph, @NotNull Heuristic heuristic) {
+    private final ExecutorService threadPool;
+
+    public AStarShortestPathMultiThreaded(@NotNull Graph graph, @NotNull Heuristic heuristic,
+                                          @NotNull ExecutorService threadPool) {
         super(graph, heuristic);
+        this.threadPool = threadPool;
     }
 
     @Override
@@ -26,14 +30,12 @@ public class AStarShortestPathMultiThreaded extends AStarShortestPath {
     public GraphPath findPath(@NotNull VertexId start, @NotNull VertexId finish) {
         AStarTrackedVertexFactory trackedVertexFactory = new AStarTrackedVertexFactory(heuristic, finish);
         AStarContext builder = this.context;
-        ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         CountDownLatch latch;
 
         builder.open(trackedVertexFactory.createTrackedVertex(start));
         while(builder.hasNext()) {
             TrackedVertex current = builder.closeNext();
             if(current.getId().equals(finish)) {
-                threadPool.shutdown();
                 return builder.getGraphPath(current);
             }
 
@@ -49,8 +51,6 @@ public class AStarShortestPathMultiThreaded extends AStarShortestPath {
                 return builder.getFailedGraphPath();
             }
         }
-
-        threadPool.shutdown();
 
         return builder.getFailedGraphPath();
     }
