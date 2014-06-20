@@ -1,9 +1,11 @@
 package com.clickbank.shortestpath.grid;
 
-import com.clickbank.shortestpath.*;
+import com.clickbank.shortestpath.Graph;
+import com.clickbank.shortestpath.GraphPath;
+import com.clickbank.shortestpath.GraphPathPrinter;
+import com.clickbank.shortestpath.PrintTarget;
+import com.clickbank.shortestpath.VertexId;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
 
 public class GridGraphPrinter implements GraphPathPrinter {
 
@@ -13,7 +15,7 @@ public class GridGraphPrinter implements GraphPathPrinter {
         this.graph = graph;
     }
 
-    //    @Override
+    @Override
     public void printGraphPath(@NotNull GraphPath path, @NotNull PrintTarget target) {
         int maxX = -1, maxY = -1;
 
@@ -21,10 +23,6 @@ public class GridGraphPrinter implements GraphPathPrinter {
             maxX = Math.max(maxX, (int)id.getX());
             maxY = Math.max(maxY, (int)id.getY());
         }
-        /*HashMap<VertexId,VertexId> pathVertices = new HashMap<>();
-        for(VertexId trackedVertex : path) {
-            pathVertices.put(trackedVertex, trackedVertex);
-        }*/
 
         for(int r = 0 ; r <= maxX ; ++r) {
             for(int c = 0 ; c <= maxY ; ++c) {

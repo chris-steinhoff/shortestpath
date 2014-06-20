@@ -36,8 +36,6 @@ public class AStarContextBenchmark extends Benchmark {
     protected void setUp() throws Exception {
         super.setUp();
 
-        //threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        //threadPool = Executors.newCachedThreadPool();
         ThreadPoolExecutor tp = new ThreadPoolExecutor(4, 4, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
         tp.prestartAllCoreThreads();
         threadPool = tp;

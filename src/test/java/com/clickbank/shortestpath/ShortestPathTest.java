@@ -26,7 +26,8 @@ public class ShortestPathTest {
                 new Object[] {new File("src/test/resources/large.grf")},
                 new Object[] {new File("src/test/resources/concave.grf")},
                 new Object[] {new File("src/test/resources/wikipedia.grf")},
-                new Object[] {new File("src/test/resources/bench.grf")}
+                new Object[] {new File("src/test/resources/bench.grf")},
+                new Object[] {new File("src/test/resources/nopath.grf")}
         );
     }
 
@@ -46,15 +47,19 @@ public class ShortestPathTest {
         AStarShortestPath shortestPath = new AStarShortestPath(data.graph, heuristic);
         GraphPath path = shortestPath.findPath(data.start, data.finish);
 
-        TerminalPrintTarget target;
-        if("linux".equals(TERM)) {
-            target = new TerminalPrintTarget();
+        if(path.wasPathFound()) {
+            TerminalPrintTarget target;
+            if(TERM == null || "linux".equals(TERM)) {
+                target = new TerminalPrintTarget();
+            } else {
+                target = new TerminalColorPrintTarget();
+            }
+            GridGraphPrinter printer = new GridGraphPrinter(data.graph);
+            printer.printGraphPath(path, target);
+            System.out.println();
         } else {
-            target = new TerminalColorPrintTarget();
+            System.out.println("Path not found!\n");
         }
-        GridGraphPrinter printer = new GridGraphPrinter(data.graph);
-        printer.printGraphPath(path, target);
-        System.out.println();
     }
 
 }
