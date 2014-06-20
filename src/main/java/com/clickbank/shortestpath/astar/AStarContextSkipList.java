@@ -14,57 +14,38 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @ThreadSafe
 public class AStarContextSkipList extends AStarContext {
 
-    @GuardedBy("lock")
-    private final ConcurrentSkipListSet<TrackedVertex> openSet = new ConcurrentSkipListSet<>(new AStarTrackedVertexComparator());
+    @GuardedBy("this")
+    private final ConcurrentSkipListSet<TrackedVertex> openSet =
+            new ConcurrentSkipListSet<>(new AStarTrackedVertexComparator());
 
-    public void open(@NotNull TrackedVertex vertex) {
-        synchronized(lock) {
-            if(!openSet.contains(vertex)) {
-                openSet.add(vertex);
-            }
+    public synchronized void open(@NotNull TrackedVertex vertex) {
+        if(!openSet.contains(vertex)) {
+            openSet.add(vertex);
         }
     }
 
-    public boolean hasNext() {
-        synchronized(lock) {
-            return !openSet.isEmpty();
-        }
+    public synchronized boolean hasNext() {
+        return !openSet.isEmpty();
     }
 
-    public TrackedVertex closeNext() {
-        TrackedVertex next;
-        synchronized(lock) {
-            next = openSet.pollFirst();
-            closedSet.add(next.getId());
-        }
+    public synchronized TrackedVertex closeNext() {
+        TrackedVertex next = openSet.pollFirst();
+        closedSet.add(next.getId());
         return next;
     }
 
-    public void openIfNotClosed(TrackedVertex neighbor) {
-        synchronized(lock) {
-            if(!closedSet.contains(neighbor.getId()) && !openSet.contains(neighbor)) {
-                openSet.add(neighbor);
-            }
+    public synchronized void openIfNotClosed(TrackedVertex neighbor) {
+        if(!closedSet.contains(neighbor.getId()) && !openSet.contains(neighbor)) {
+            openSet.add(neighbor);
         }
     }
 
-    public Set<VertexId> getVisited() {
-        HashSet<VertexId> visited;
-        synchronized(lock) {
-            visited = new HashSet<>(closedSet);
-            for(TrackedVertex trackedVertex : openSet) {
-                visited.add(trackedVertex.getId());
-            }
+    public synchronized Set<VertexId> getVisited() {
+        HashSet<VertexId> visited = new HashSet<>(closedSet);
+        for(TrackedVertex trackedVertex : openSet) {
+            visited.add(trackedVertex.getId());
         }
         return visited;
-    }
-
-    public GraphPath getGraphPath(TrackedVertex finish) {
-        return GraphPath.createGraphPath(getVisited(), finish);
-    }
-
-    public GraphPath getFailedGraphPath() {
-        return GraphPath.createFailedGraphPath(getVisited());
     }
 
 }
