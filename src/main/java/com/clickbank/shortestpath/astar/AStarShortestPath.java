@@ -19,22 +19,22 @@ public class AStarShortestPath implements PathFinder {
     @NotNull
     public GraphPath findPath(@NotNull VertexId start, @NotNull VertexId finish) {
         AStarTrackedVertexFactory trackedVertexFactory = new AStarTrackedVertexFactory(heuristic, finish);
-        AStarContext builder = this.context;
+        AStarContext context = this.context;
 
-        builder.open(trackedVertexFactory.createTrackedVertex(start));
-        while(builder.hasNext()) {
-            TrackedVertex current = builder.closeNext();
+        context.open(trackedVertexFactory.createTrackedVertex(start));
+        while(context.hasNext()) {
+            TrackedVertex current = context.closeNext();
             if(current.getId().equals(finish)) {
-                return builder.getGraphPath(current);
+                return context.getGraphPath(current);
             }
 
             for(VertexId vertex : graph.getNeighbors(current.getId())) {
                 TrackedVertex neighbor = trackedVertexFactory.createNeighboringTrackedVertex(current, vertex);
-                builder.openIfNotClosed(neighbor);
+                context.openIfNotClosed(neighbor);
             }
         }
 
-        return builder.getFailedGraphPath();
+        return context.getFailedGraphPath();
     }
 
     public void setContext(@NotNull AStarContext context) {

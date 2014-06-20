@@ -5,15 +5,14 @@ import com.clickbank.shortestpath.astar.AStarContextSkipList;
 import com.clickbank.shortestpath.astar.AStarShortestPath;
 import com.clickbank.shortestpath.astar.AStarShortestPathMultiThreaded;
 import com.clickbank.shortestpath.grid.GridGraphFactory;
-import com.clickbank.shortestpath.grid.GridGraphPrinter;
 import com.google.caliper.Benchmark;
 import com.google.caliper.Param;
-import com.google.caliper.api.Macrobenchmark;
 import com.google.caliper.runner.CaliperMain;
 
 import java.io.File;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class AStarContextBenchmark extends Benchmark {
@@ -37,7 +36,11 @@ public class AStarContextBenchmark extends Benchmark {
     protected void setUp() throws Exception {
         super.setUp();
 
-        threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        //threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        //threadPool = Executors.newCachedThreadPool();
+        ThreadPoolExecutor tp = new ThreadPoolExecutor(4, 4, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(4));
+        tp.prestartAllCoreThreads();
+        threadPool = tp;
 
         graphData = GridGraphFactory.createGraph(concaveGraphFile.getAbsolutePath());
         shortestPath = shortestPathImpl.getImpl(graphData.graph, heuristicImpl.getImpl(), threadPool);
@@ -49,10 +52,6 @@ public class AStarContextBenchmark extends Benchmark {
         super.tearDown();
         threadPool.shutdownNow();
         threadPool.awaitTermination(10, TimeUnit.SECONDS);
-        /*if(graphPath != null) {
-            GraphPathPrinter printer = new GridGraphPrinter(graphData.graph);
-            printer.printGraphPath(graphPath, new TerminalPrintTarget());
-        }*/
     }
 
     public GraphPath timeShortestPath(int reps) {
@@ -62,7 +61,6 @@ public class AStarContextBenchmark extends Benchmark {
         for(int i = 0 ; i < reps ; ++i) {
             path = shortestPath.findPath(start, finish);
         }
-        //graphPath = path;
         return path;
     }
 
